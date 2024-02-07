@@ -20,11 +20,13 @@ public class VagaController {
     private VagaRepository vr;
     private CandidatoRepository cr;
 
+    // Método para retornar o formulário de cadastro de vaga
     @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.GET)
     public String form(){
         return "vaga/formVaga.html";
     }
 
+    // Método para processar o formulário de cadastro de vaga
     @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.POST)
     public String form(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes){
 
@@ -38,6 +40,7 @@ public class VagaController {
         return "redirect:/cadastrarVaga";
     }
 
+    // Método para listar todas as vagas
     @RequestMapping("/vagas")
     public ModelAndView listarVagas(){
         ModelAndView mv = new ModelAndView("vaga/listaVaga");
@@ -46,6 +49,7 @@ public class VagaController {
         return mv;
     }
 
+    // Método para mostrar os detalhes de uma vaga específica
     @RequestMapping(value = "/{codigo}", method = RequestMethod.GET)
     public ModelAndView detalhesVaga(@PathVariable("codigo") Long codigo){
         Vaga vaga = vr.findByCodigo(codigo);
@@ -58,5 +62,32 @@ public class VagaController {
         return mv;
     }
 
+    // Método para deletar uma vaga específica
+    @RequestMapping("/deletarVaga")
+    public String deletarVaga(Long codigo){
+        Vaga vaga = vr.findByCodigo(codigo);
+        vr.delete(vaga);
+        return "redirect:/vagas";
+    }
+
+    // Método para processar o formulário de cadastro de candidato para uma vaga específica
+    public String detalhesVagaPost(@PathVariable("codigo") Long codigo, @Valid Candidato candidato,
+                                   BindingResult result, RedirectAttributes attributes ){
+
+        if(result.hasErrors()) {
+            attributes.addFlashAttribute("mensagem", "Verifique os campos");
+            return "redirect:/{codigo}";
+        }
+        if(cr.findByRg(candidato.getRg()) != null){
+            attributes.addFlashAttribute("mensagem erro", "RG duplicado");
+            return "redirect:/{codigo}";
+        }
+        Vaga vaga = vr.findByCodigo(codigo);
+        candidato.setVaga(vaga);
+        cr.save(candidato);
+        attributes.addFlashAttribute("mensagem", "Candidato adicionado com sucesso!");
+        return "redirect:/{codigo}";
+
+    }
 
 }
