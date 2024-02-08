@@ -29,19 +29,19 @@
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="#">App RH</a>
+				<a class="navbar-brand" href="/">App RH</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
 					aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
-						<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
+						<li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
 
-						<li class="nav-item"><a class="nav-link" href="#">
+						<li class="nav-item"><a class="nav-link" href="/vagas">
 								<< Listar Vagas>>
 							</a></li>
-						<li class="nav-item"><a class="nav-link" href="#">
+						<li class="nav-item"><a class="nav-link" href="/cadastrarVaga">
 								<< Cadastrar Vaga>>
 							</a></li>
 
@@ -57,7 +57,7 @@
 	<div class="container">
 
 
-
+		<th:block th:include="mensagemValidacao"></th:block>
 
 
 		<form method="post">
@@ -68,7 +68,7 @@
 
 			<div class="form-group">
 				<label for=""><b>Nome do cargo:</b> </label> <input type="text" class="form-control" value=""
-					name="nome" required /> <small class="form-text text-muted"><i>* Utilize nomes e
+					name="nome" th:attr="value = ${vaga.nome}" required /> <small class="form-text text-muted"><i>* Utilize nomes e
 						termos mais utilizados no mercado.</i></small>
 			</div>
 
@@ -78,7 +78,7 @@
 				<div class="col">
 					<div class="form-group">
 						<label for=""><b>Data de expiração:</b></label> <input type="date" class="form-control" value=""
-							name="data" required /><small class="form-text text-muted"><i>* Data em que a vaga
+							name="data" th:attr="value = ${vaga.data}" required /><small class="form-text text-muted"><i>* Data em que a vaga
 								expira.</i></small>
 					</div>
 				</div>
@@ -86,7 +86,7 @@
 
 					<div class="form-group">
 						<label for=""><b>Salário:</b></label> R$ <input type="number" class="form-control"
-							pattern="^\d+(\.|\,)\d{2}$" value="" name="salario" required /><small
+							pattern="^\d+(\.|\,)\d{2}$" value="" name="salario" th:attr="value = ${vaga.salario}" required /><small
 							class="form-text text-muted"><i>* Utilize valores
 								considerando vírgula e ponto.</i></small>
 					</div>
@@ -95,7 +95,7 @@
 
 			<div class="form-group">
 				<label for=""><b>Descrição da vaga:</b></label>
-				<textarea class="form-control" name="descricao" maxlength="254" rows="3" required></textarea>
+				<textarea class="form-control" name="descricao" maxlength="254" rows="3" th:text="${vaga.descricao}" required></textarea>
 				<small class="form-text text-muted"><i>* Breve resumo da
 						vaga oferecida..</i></small>
 			</div>
