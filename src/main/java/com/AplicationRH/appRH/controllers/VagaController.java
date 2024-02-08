@@ -5,126 +5,76 @@ import com.AplicationRH.appRH.models.Candidato;
 import com.AplicationRH.appRH.models.Vaga;
 import com.AplicationRH.appRH.repositories.CandidatoRepository;
 import com.AplicationRH.appRH.repositories.VagaRepository;
+import com.AplicationRH.appRH.services.VagaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@RestController
+@Controller
 public class VagaController {
 
-    @Autowired
-    private VagaRepository vr;
-    @Autowired
-    private CandidatoRepository cr;
+    private final VagaService vagaService;
 
-    // Método para retornar o formulário de cadastro de vaga
-    @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.GET)
-    public ModelAndView form(){
-        ModelAndView mv = new ModelAndView("vaga/formVaga");
-        return mv;
+    @Autowired
+    public VagaController(VagaService vagaService) {
+        this.vagaService = vagaService;
     }
 
-    // Método para processar o formulário de cadastro de vaga
-    @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.POST)
-    public ModelAndView form(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes){
-
-        if(result.hasErrors()){
-            attributes.addFlashAttribute("mensagem", "verifique os campos...");
-            return new ModelAndView();
-        }
-        vr.save(vaga);
-        attributes.addFlashAttribute("mensagem", "Vaga cadastrada com sucesso!");
-        ModelAndView mv = new ModelAndView("redirect:/cadastrarVaga");
-        return mv;
+    @GetMapping("/cadastrarVaga")
+    public String formVaga() {
+        return "vaga/formVaga";
     }
 
-    // Método para listar todas as vagas
-    @RequestMapping("/vagas")
-    public ModelAndView listarVagas(){
+    @PostMapping("/cadastrarVaga")
+    public String cadastrarVaga(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes) {
+        return vagaService.cadastrarVaga(vaga, result, attributes);
+    }
+
+    @GetMapping("/vagas")
+    public ModelAndView listaVagas() {
         ModelAndView mv = new ModelAndView("vaga/listaVaga");
-        Iterable<Vaga>vagas = vr.findAll();
-        mv.addObject("vagas", vagas);
+        mv.addObject("vagas", vagaService.listarVagas());
         return mv;
     }
 
-    // Método para mostrar os detalhes de uma vaga específica
-    @RequestMapping(value = "/{codigo}", method = RequestMethod.GET)
-    public ModelAndView detalhesVaga(@PathVariable("codigo") Long codigo){
-        Vaga vaga = vr.findByCodigo(codigo);
+    @GetMapping("/{codigo}")
+    public ModelAndView detalhesVaga(@PathVariable("codigo") long codigo) {
         ModelAndView mv = new ModelAndView("vaga/detalhesVaga");
-        mv.addObject("vaga", vaga);
-
-        Iterable<Candidato> candidatos = cr.findByVaga(vaga);
-        mv.addObject("candidatos", candidatos);
-
+        mv.addObject("vaga", vagaService.detalhesVaga(codigo));
+        mv.addObject("candidatos", vagaService.detalhesVaga(codigo).getCandidato());
         return mv;
     }
 
-    // Método para deletar uma vaga específica
-    @RequestMapping("/deletarVaga")
-    public String deletarVaga(Long codigo){
-        Vaga vaga = vr.findByCodigo(codigo);
-        vr.delete(vaga);
-        return "redirect:/vagas";
+    @PostMapping("/{codigo}")
+    public String adicionarCandidato(@PathVariable("codigo") long codigo, @Valid Candidato candidato,
+                                     BindingResult result, RedirectAttributes attributes) {
+        return vagaService.adicionarCandidato(codigo, candidato, result, attributes);
     }
 
-    // Método para processar o formulário de cadastro de candidato para uma vaga específica
-    public String detalhesVagaPost(@PathVariable("codigo") Long codigo, @Valid Candidato candidato,
-                                   BindingResult result, RedirectAttributes attributes ){
-
-        if(result.hasErrors()) {
-            attributes.addFlashAttribute("mensagem", "Verifique os campos");
-            return "redirect:/{codigo}";
-        }
-        if(cr.findByRg(candidato.getRg()) != null){
-            attributes.addFlashAttribute("mensagem erro", "RG duplicado");
-            return "redirect:/{codigo}";
-        }
-        Vaga vaga = vr.findByCodigo(codigo);
-        candidato.setVaga(vaga);
-        cr.save(candidato);
-        attributes.addFlashAttribute("mensagem", "Candidato adicionado com sucesso!");
-        return "redirect:/{codigo}";
-
+    @GetMapping("/deletarVaga")
+    public String deletarVaga(long codigo) {
+        return vagaService.deletarVaga(codigo);
     }
 
-    // GET que deleta o candidato pelo RG
-    @RequestMapping("/deletarCandidato")
+    @GetMapping("/deletarCandidato")
     public String deletarCandidato(String rg) {
-        Candidato candidato = cr.findByRg(rg);
-        Vaga vaga = candidato.getVaga();
-        String codigo = "" + vaga.getCodigo();
-
-        cr.delete(candidato);
-
-        return "redirect:/vaga/" + codigo;
-
+        return vagaService.deletarCandidato(rg);
     }
 
-    // Métodos que atualizam vaga
-    // GET que chama o formulário de edição da vaga
-    @RequestMapping(value="/editar-vaga", method = RequestMethod.GET)
-    public ModelAndView editarVaga(Long codigo) {
-        Vaga vaga = vr.findByCodigo(codigo);
+    @GetMapping("/editar-vaga")
+    public ModelAndView editarVaga(long codigo) {
         ModelAndView mv = new ModelAndView("vaga/update-vaga");
-        mv.addObject("vaga", vaga);
+        mv.addObject("vaga", vagaService.editarVaga(codigo));
         return mv;
     }
 
-    // POST do FORM que atualiza a vaga
-    @RequestMapping(value = "/editar-vaga", method = RequestMethod.POST)
+    @PostMapping("/editar-vaga")
     public String updateVaga(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes) {
-        vr.save(vaga);
-        attributes.addFlashAttribute("success", "Vaga alterada com sucesso!");
-
-        long codigoLong = vaga.getCodigo();
-        String codigo = "" +codigoLong;
-        return "redirect:/" + codigo;
+        return vagaService.updateVaga(vaga, result, attributes);
     }
 }
+
