@@ -1,43 +1,47 @@
 package com.AplicationRH.appRH.controllers;
 
+
 import com.AplicationRH.appRH.models.Candidato;
 import com.AplicationRH.appRH.models.Vaga;
 import com.AplicationRH.appRH.repositories.CandidatoRepository;
 import com.AplicationRH.appRH.repositories.VagaRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @RestController
 public class VagaController {
 
+    @Autowired
     private VagaRepository vr;
+    @Autowired
     private CandidatoRepository cr;
 
     // Método para retornar o formulário de cadastro de vaga
     @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.GET)
-    public String form(){
-        return "vaga/formVaga.html";
+    public ModelAndView form(){
+        ModelAndView mv = new ModelAndView("vaga/formVaga");
+        return mv;
     }
 
     // Método para processar o formulário de cadastro de vaga
     @RequestMapping(value = "/cadastrarVaga", method = RequestMethod.POST)
-    public String form(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes){
+    public ModelAndView form(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes){
 
         if(result.hasErrors()){
             attributes.addFlashAttribute("mensagem", "verifique os campos...");
-            return "redirect:/cadastrarVaga";
+            return new ModelAndView();
         }
         vr.save(vaga);
         attributes.addFlashAttribute("mensagem", "Vaga cadastrada com sucesso!");
-
-        return "redirect:/cadastrarVaga";
+        ModelAndView mv = new ModelAndView("redirect:/cadastrarVaga");
+        return mv;
     }
 
     // Método para listar todas as vagas

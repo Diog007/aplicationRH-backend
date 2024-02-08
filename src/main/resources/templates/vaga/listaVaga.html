@@ -38,11 +38,11 @@
 				</button>
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
-						<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Home</a></li>
-						<li class="nav-item"><a class="nav-link" href="#">
+						<li class="nav-item"><a class="nav-link active" aria-current="page" href="">Home</a></li>
+						<li class="nav-item"><a class="nav-link" href="/vagas">
 								<< Listar Vagas>>
 							</a></li>
-						<li class="nav-item"><a class="nav-link" href="#">
+						<li class="nav-item"><a class="nav-link" href="/cadastrarVaga">
 								<< Cadastrar Vaga>>
 							</a></li>
 
@@ -73,15 +73,19 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td><a href="#"><span></span></a></td>
-					<td><span></span></td>
-					<td>R$ <span></span></td>
-					<td><span></span></td>
-					<td><a href="#"><button type="button" class="btn btn-danger">Excluir</button></a></td>
-					<td><a href="#"><button type="button" class="btn btn-primary">Editar</button></a></td>
-					<td><a href="#"><button type="button" class="btn btn-success">Adicionar candidato</button></a></td>
-				</tr>
+			<tr th:each="vaga: ${vagas}">
+				<td><a th:href="${(#mvc.url('VC#detalhesVaga').arg(0, vaga.codigo)).build()}">
+					<span th:text="${vaga.nome}"></span></a></td>
+				<td><span th:text="${vaga.descricao}"></span></td>
+				<td>R$ <span th:text="${vaga.salario}"></span></td>
+				<td><span th:text="${vaga.data}"></span></td>
+				<td><a th:href="${(#mvc.url('VC#deletarVaga').arg(0, vaga.codigo)).build()}"><button type="button"
+																									 class="btn btn-danger">Excluir</button></a></td>
+				<td><a th:href="${(#mvc.url('VC#editarVaga').arg(0, vaga.codigo)).build()}"><button type="button"
+																									class="btn btn-primary">Editar</button></a></td>
+				<td><a th:href="${(#mvc.url('VC#detalhesVaga').arg(0, vaga.codigo)).build()}"><button type="button"
+																									  class="btn btn-success">Adicionar candidato</button></a></td>
+			</tr>
 			</tbody>
 		</table>
 
