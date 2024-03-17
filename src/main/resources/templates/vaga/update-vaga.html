@@ -69,39 +69,51 @@
 	</nav>
 </header>
 
-<div class="container mt-5">
-	<h1 class="text-center mb-5">Atualizar Vaga</h1>
+
+<div class="container">
+
+
+	<th:block th:include="mensagemValidacao"></th:block>
+
+
 	<form method="post">
-		<div class="mb-3">
-			<label for="nome" class="form-label">Nome do Cargo:</label>
-			<input type="text" class="form-control" id="nome" name="nome" placeholder="Insira o nome do cargo"
-				   required>
-			<small class="form-text text-muted">* Utilize nomes e termos mais utilizados no mercado.</small>
+
+		<h1>Atualizar vaga</h1>
+
+		<br>
+
+		<div class="form-group">
+			<label for=""><b>Nome do cargo:</b> </label> <input type="text" class="form-control" value=""
+																name="nome" th:attr="value = ${vaga.nome}" required /> <small class="form-text text-muted"><i>* Utilize nomes e
+			termos mais utilizados no mercado.</i></small>
 		</div>
+
+
 		<div class="row">
+
 			<div class="col">
-				<div class="mb-3">
-					<label for="data" class="form-label">Data de Expiração:</label>
-					<input type="date" class="form-control" id="data" name="data" required>
-					<small class="form-text text-muted">* Data em que a vaga expira.</small>
+				<div class="form-group">
+					<label for=""><b>Data de expiração:</b></label> <input type="date" class="form-control" value=""
+																		   name="data" th:attr="value = ${vaga.data}" required /><small class="form-text text-muted"><i>* Data em que a vaga
+					expira.</i></small>
 				</div>
 			</div>
 			<div class="col">
-				<div class="mb-3">
-					<label for="salario" class="form-label">Salário:</label>
-					<div class="input-group">
-						<span class="input-group-text">R$</span>
-						<input type="number" class="form-control" id="salario" name="salario" required>
-					</div>
-					<small class="form-text text-muted">* Utilize valores sem considerar vírgulas e pontos.</small>
+
+				<div class="form-group">
+					<label for=""><b>Salário:</b></label> R$ <input type="number" class="form-control"
+																	pattern="^\d+(\.|\,)\d{2}$" value="" name="salario" th:attr="value = ${vaga.salario}" required /><small
+						class="form-text text-muted"><i>* Utilize valores
+					considerando vírgula e ponto.</i></small>
 				</div>
 			</div>
 		</div>
-		<div class="mb-3">
-			<label for="descricao" class="form-label">Descrição da Vaga:</label>
-			<textarea class="form-control" id="descricao" name="descricao" rows="3" maxlength="254"
-					  required></textarea>
-			<small class="form-text text-muted">* Breve resumo da vaga oferecida.</small>
+
+		<div class="form-group">
+			<label for=""><b>Descrição da vaga:</b></label>
+			<textarea class="form-control" name="descricao" maxlength="254" rows="3" th:text="${vaga.descricao}" required></textarea>
+			<small class="form-text text-muted"><i>* Breve resumo da
+				vaga oferecida..</i></small>
 		</div>
 		<button type="submit" class="btn btn-success d-block mx-auto">Salvar</button>
 	</form>
