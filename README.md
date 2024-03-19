@@ -13,7 +13,7 @@ https://github.com/Diog007/aplicationRH-backend/assets/151067241/e286a349-b28c-4
 
 
 ## 🚀 Deploy 
-A API foi implantada na AWS para facilitar o teste. Você pode acessar a aplicação através deste [Swagger for application](http://3.21.128.67:8080).
+A API foi implantada na AWS para facilitar o teste. Você pode acessar a aplicação através deste [Deploy for application](http://3.21.128.67:8080).
 
 ## 🛠️ Compilação
 Para gerar os arquivos-fonte, siga o padrão de um projeto Maven: `mvn clean install`.
